@@ -9,27 +9,89 @@ output: html_document
 
 ``` {r }
 library(readr)
+library(gapminder)
+library(dplyr)
+library(ggplot2)
 energy <- read_csv('../../data/IRENA data.csv', skip=1)
+View(energy)
 ```
 
 ## Gapminder dataset
 
 ``` {r}
-library(gapminder)
-library(dplyr)
 data(gapminder)
 gapminder %>% head
+View(gapminder)
 ```
 
 ## Carbon emissions
 
-``` {r}
-
-library(ggplot2)
+``` {r, echo=FALSE}
 
 url <- 'https://nyc3.digitaloceanspaces.com/owid-public/data/co2/owid-co2-data.csv'
 carbon <-
   read_csv(url)
+View(carbon)
+carbon %>% pull(country) %>% unique
+carbi <- 
+  carbon %>% 
+  filter(country %in% c('United States', 'China', 'India', 'Germany', 'Brazil', 'World'))
+
+ggplot(carbi,
+       aes(x = year,
+            y = co2, 
+           color = country)) +
+  geom_point() +
+  scale_y_continuous(trans = "log") +
+  theme_bw() +
+  labs(title = "working title",
+       caption = "Annual co2 Emissions in 5 Countries and World",
+       x = "Year",
+       y = "Annual co2 Emissions (Logarithmic scale)")
+```
+``` {r, echo=FALSE}
+
+ggplot(carbi, 
+       aes(x = year,
+           y = population,
+           color = country)) +
+  geom_point() +
+  scale_y_continuous(trans = "log") +
+  theme_bw() +
+  labs(title = "working title",
+       caption = "Change in population in 5 Countries and World",
+       x = "Year",
+       y = "Population (Logarithmic scale)")
+```
+## Renewable Energy dataset
+
+``` {r, echo=FALSE }
+library(readr)
+library(gapminder)
+library(dplyr)
+library(ggplot2)
+energy <- read_csv('../../data/IRENA data.csv', skip=1)
+energy %>% names
+
+energy %>% pull("Country/area") %>% unique
+
+ energi <- 
+  energy %>% 
+  filter(`Country/area` %in% c('United States of America (the)')) %>% 
+  filter(`Technology` %in% c('Total renewable', 'Total non-renewable')) 
+
+
+ggplot(year1, 
+       aes(x = Year,
+           y = `Electricity statistics`,
+           color = Technology)) +
+  geom_point() +
+  theme_bw() +
+  labs(title = "working title",
+       caption = "x",
+       x = "Year",
+       y = "x")
+
 ```
 
 ## Levelized cost of energy
@@ -38,6 +100,8 @@ carbon <-
 url <- 'https://raw.githubusercontent.com/ericmkeen/sewanee_esus/master/02_energy_sector/levelized-cost-of-energy.csv'
 econ <- read_csv(url)
 econ %>% head
+View(econ)
+econ %>% pull(country) %>% unique
 ```
 
 ```{r}
