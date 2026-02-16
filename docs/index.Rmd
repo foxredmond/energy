@@ -1,27 +1,40 @@
 ---
-title: "energy"
+title: "The Energy Landscape"
 author: "Fox Redmond"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-## Renewable Energy dataset
+## Introduction
 
-``` {r, echo=FALSE}
+##### The feasibility of the switch to renewable energy sources is a heavy priority in the U.N.'s sustainable development goals (SDGs) 
+
+
+
+
+
+
+
+
+
+## Narrative
+
+#### (narrative here)
+
+
+
+``` {r, echo=FALSE, include = FALSE}
 library(readr)
 library(gapminder)
 library(dplyr)
 library(ggplot2)
 energy <- read_csv('../../data/IRENA data.csv', skip=1)
-View(energy)
 ```
 
 ## Gapminder dataset
 
 ``` {r, echo=FALSE}
 data(gapminder)
-gapminder %>% head
-View(gapminder)
 ```
 
 ## Carbon emissions
@@ -35,7 +48,8 @@ View(carbon)
 carbon %>% pull(country) %>% unique
 carbi <- 
   carbon %>% 
-  filter(country %in% c('United States', 'China', 'India', 'Germany', 'Brazil', 'World'))
+  filter(country %in% c('United States', 'China', 'India', 'Germany', 'Brazil', 'World')) %>% 
+  mutate(population = population/1000000)
 
 ggplot(carbi,
        aes(x = year,
@@ -47,8 +61,10 @@ ggplot(carbi,
   labs(title = "working title",
        caption = "Annual co2 Emissions in 5 Countries and World",
        x = "Year",
-       y = "Annual co2 Emissions (Logarithmic scale)")
+       y = "Annual co2 Emissions (Million Metric Tons)")
 ```
+
+
 ``` {r, echo=FALSE}
 
 ggplot(carbi, 
@@ -61,15 +77,13 @@ ggplot(carbi,
   labs(title = "working title",
        caption = "Change in population in 5 Countries and World",
        x = "Year",
-       y = "Population (Logarithmic scale)")
+       y = "Population (Millions)")
 ```
+
 ## Renewable Energy dataset
 
+
 ``` {r, echo=FALSE }
-library(readr)
-library(gapminder)
-library(dplyr)
-library(ggplot2)
 energy <- read_csv('../../data/IRENA data.csv', skip=1)
 energy %>% names
 
@@ -77,15 +91,17 @@ energy %>% pull("Country/area") %>% unique
 
  energi <- 
   energy %>% 
-  filter(`Country/area` %in% c('United States of America (the)')) %>% 
+  filter(`Country/area` %in% c('United States of America (the)', 'China', 'India', 'Germany', 'Brazil')) %>% 
   filter(`Technology` %in% c('Total renewable', 'Total non-renewable')) 
 
 
 ggplot(energi, 
        aes(x = Year,
-           y = `Electricity statistics`,
-           color = Technology)) +
+           y = as.numeric (`Electricity statistics`),
+           color = `Country/area`)) +
   geom_point() +
+  geom_path()+
+  facet_wrap(~Technology) +
   theme_bw() +
   labs(title = "working title",
        caption = "x",
@@ -105,17 +121,26 @@ econ %>% pull(country) %>% unique
 ```
 
 ```{r}
-ggplot(econ,
+
+ econi <- 
+  econ %>% 
+  filter(country %in% c('United States)', 'China', 'India', 'Germany', 'Brazil')) %>% 
+  filter(source %in% c('Solar photovoltaic', 'Onshore wind'))
+
+ggplot(econi,
        aes(x = year,
            y = cost,
            color = source)) +
   geom_point() +
+  theme_bw()+
   geom_hline(yintercept = 0.05, lty=2)+
   geom_hline(yintercept = 0.18, lty=2)+
   annotate(geom='text',
            x=1990, y=0.1, 
            label= 'Range of fossil\n fuel prices')
 ```
+
+
 ```{r}
 library(knitr)
 econ %>% 
@@ -125,7 +150,13 @@ econ %>%
   kable
 ```
 
+## Takeaways
 
+
+
+
+
+## Data Sources
 
 
 
