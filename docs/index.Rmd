@@ -139,7 +139,7 @@ econi <-
 
 ```{r, echo=FALSE, warning=FALSE}
 
-ggplot(econi,
+facetplot <- ggplot(econi,
        aes(x = year,
            y = cost,
            color = source)) +
@@ -154,10 +154,10 @@ ggplot(econi,
   annotate(geom='text',
            x=1990, y=0.1, 
            label= 'Range of fossil\n fuel prices')
-ggplotly()
+ggplotly(facetplot)
 
 ```
-##### **Hover over points on the bottom graph to see more details**
+##### **Hover over points to see more details**
 
 &nbsp;
 
