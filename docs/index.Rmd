@@ -1,56 +1,48 @@
 ---
-title: "The Energy Landscape"
+title: "The Energy Landscape and Green Energy Transition"
 author: "Fox Redmond"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
+&nbsp;
+
 ## Introduction
 
-##### The feasibility of the switch to renewable energy sources is a heavy priority in the U.N.'s sustainable development goals (SDGs) 
+&nbsp;
 
+##### Among the United Nation's 17 key goals for sustainable development, one of its most extensive and overarching goals, is number 13: Climate Action. It's objective is to "take urgent action to combat climate change and its impacts." The following document uses figures and tables to demonstrate some context, progress, and pathways for combating climate change. Its focus is on the current energy picture as well as the potential for transition to Renewable energy sources.
 
+&nbsp;
 
+## The Current Landscape
 
-
-
-
-
-
-## Narrative
-
-#### (narrative here)
-
-
+&nbsp;
 
 ``` {r, echo=FALSE, include = FALSE}
 library(readr)
 library(gapminder)
 library(dplyr)
 library(ggplot2)
+library(plotly)
 energy <- read_csv('../../data/IRENA data.csv', skip=1)
 ```
 
-## Gapminder dataset
 
-``` {r, echo=FALSE}
-data(gapminder)
-```
 
-## Carbon emissions
-
-``` {r, echo=FALSE}
+``` {r, echo=FALSE, warning = FALSE, include = FALSE}
 
 url <- 'https://nyc3.digitaloceanspaces.com/owid-public/data/co2/owid-co2-data.csv'
 carbon <-
   read_csv(url)
-View(carbon)
-carbon %>% pull(country) %>% unique
+
 carbi <- 
   carbon %>% 
   filter(country %in% c('United States', 'China', 'India', 'Germany', 'Brazil', 'World')) %>% 
   mutate(population = population/1000000)
+```
 
+```{r, echo=FALSE, warning=FALSE}
 ggplot(carbi,
        aes(x = year,
             y = co2, 
@@ -58,43 +50,59 @@ ggplot(carbi,
   geom_point() +
   scale_y_continuous(trans = "log") +
   theme_bw() +
-  labs(title = "working title",
-       caption = "Annual co2 Emissions in 5 Countries and World",
+  labs(title = "co2 Emissions",
+       caption = "Figure 1: Annual co2 Emissions in 5 Countries and World",
        x = "Year",
        y = "Annual co2 Emissions (Million Metric Tons)")
 ```
+&nbsp;
 
+&nbsp;
 
-``` {r, echo=FALSE}
+####  Figure 1 demonstrates the exponential rise in annual co2 emissions dating back to 1750. Note that the plot has a logarithmic scale on its y-axis. Despite countries such as Germany and the U.S. slightly tapering their co2 emissions in the 21st century, the overall data is extremely worrisome. According to the USDA, the largest use of energy from co2 emitting fossil fuels in the US is:
 
-ggplot(carbi, 
+- Transportation
+- Electric power
+- Industry
+- Residential/Commercial
+- Agriculture
+
+&nbsp;
+
+``` {r, echo=FALSE, warning=FALSE}
+carbi2 <- carbi %>% 
+filter(year >=1800)
+ggplot(carbi2, 
        aes(x = year,
            y = population,
            color = country)) +
   geom_point() +
   scale_y_continuous(trans = "log") +
   theme_bw() +
-  labs(title = "working title",
-       caption = "Change in population in 5 Countries and World",
+  labs(title = "Population Growth",
+       caption = "Figure 2: Change in population in 5 Countries and World",
        x = "Year",
        y = "Population (Millions)")
 ```
+ &nbsp;
+ 
+ &nbsp;
+ 
+#### Figure 2 demonstrates the various levels of population growth in five countries in addition to the total world. The rapid growth of world population indicates a growing need for resoures and energy (and a more responsible use of them) in order to sustain everyone.
 
-## Renewable Energy dataset
 
+&nbsp;
 
-``` {r, echo=FALSE }
+``` {r, echo=FALSE, warning=FALSE, include=FALSE}
 energy <- read_csv('../../data/IRENA data.csv', skip=1)
-energy %>% names
-
-energy %>% pull("Country/area") %>% unique
 
  energi <- 
   energy %>% 
   filter(`Country/area` %in% c('United States of America (the)', 'China', 'India', 'Germany', 'Brazil')) %>% 
   filter(`Technology` %in% c('Total renewable', 'Total non-renewable')) 
+```
 
-
+```{r, echo=FALSE, warning=FALSE}
 ggplot(energi, 
        aes(x = Year,
            y = as.numeric (`Electricity statistics`),
@@ -103,60 +111,93 @@ ggplot(energi,
   geom_path()+
   facet_wrap(~Technology) +
   theme_bw() +
-  labs(title = "working title",
-       caption = "x",
+  labs(title = "The Energy use Snapshot",
+       caption = "Figure 3: Comparison of renewable vs non-renewable energy usage in 5 countries ",
        x = "Year",
        y = "x")
-
 ```
 
-## Levelized cost of energy
+&nbsp;
 
-``` {r}
+&nbsp;
+
+#### Figure 3 demonstrates the gradual decline in use of non-renewable energy use in the U.S., Germany, and Brazil. Noteably, India and China which greatly increased their fossil fuel energy production in order to support their extensive populations and urbanization. Conversely, most countries have gradualy increased their use of renewable energy, with China once again heavily investing in this energy category.
+
+&nbsp;
+
+&nbsp;
+
+``` {r, echo=FALSE, warning=FALSE, include=FALSE}
 url <- 'https://raw.githubusercontent.com/ericmkeen/sewanee_esus/master/02_energy_sector/levelized-cost-of-energy.csv'
 econ <- read_csv(url)
-econ %>% head
-View(econ)
-econ %>% pull(country) %>% unique
-```
 
-```{r}
-
- econi <- 
+econi <- 
   econ %>% 
   filter(country %in% c('United States)', 'China', 'India', 'Germany', 'Brazil')) %>% 
   filter(source %in% c('Solar photovoltaic', 'Onshore wind'))
+```
+
+```{r, echo=FALSE, warning=FALSE}
 
 ggplot(econi,
        aes(x = year,
            y = cost,
            color = source)) +
   geom_point() +
-  theme_bw()+
+  theme_bw() +
+  labs(title = "Economic Feasibility of Renewables",
+       caption = "Figure 4: Comparison of onshore wind and solar photovoltaic lifetime cost",
+       x = "Year",
+       y = "Price ($/kWh)") +
   geom_hline(yintercept = 0.05, lty=2)+
   geom_hline(yintercept = 0.18, lty=2)+
   annotate(geom='text',
            x=1990, y=0.1, 
            label= 'Range of fossil\n fuel prices')
+ggplotly()
+
 ```
+##### **Hover over points on the bottom graph to see more details**
+
+&nbsp;
 
 
-```{r}
+#### Figure 4 demonstrates how plummeting lifetime costs of Onshore wind and Solar photovoltaic energy have now dipped below fossil fuel costs in a large selection of countries. This could pave the way for economically advantageous green energy transitions.
+
+&nbsp;
+
+&nbsp;
+
+#### Breakdown of change in prices of more renewable sources
+
+```{r, echo=FALSE, warning=FALSE, message = FALSE}
 library(knitr)
+
 econ %>% 
-  filter(year == 2020) %>% 
-  group_by(source) %>% 
-  summarize(cost = mean(cost, na.rm=TRUE)) %>% 
+  filter(year %in% c(2010, 2020)) %>%
+  group_by(source, year) %>% 
+  summarize('Cost $/KwH' = mean(cost, na.rm=TRUE)) %>%
   kable
+
 ```
+&nbsp;
+
+&nbsp; 
 
 ## Takeaways
 
+#### As we have seen so far, our world has rapidly growing co2 emissions in order to support a rapidly expanding population. Our unwavering reliance on fossil fuels has driven climate change to a threatening extent, which as noted by the UN's sustainable development goals, must be checked. Luckily, advances in renewable energy technology have been able to significantly lower their lifetime energy cost. In particular wind and solar could prove vital as economically feasible green energy sources. However, as we have seen, most countries are moving too slow with this transition. In order to respond to climate change, with the agency and severity that the issue deserves, countries must take policy measures to quicken their energy transition and align with the UN's stance, as mentioned in the [Introduction.](#introduction)
 
 
+&nbsp;
 
+&nbsp;
 
 ## Data Sources
 
+1. *Global Carbon Project* is an organization that attempts to measure green house gas emissions and deduce global budgets for key gasses, with the objective of better understanding climate change in order to combat it. [Go here to learn more](https://www.globalcarbonproject.org)
 
+2. *IRENA* (short for International Renewable Energy Agency), is an organization that monitors renewable energy data from prices to policy in order to keep governments and the public up to date and making well informed energy decisions. [Go here to learn more](https://www.irena.org/Data/Downloads/IRENASTAT)
+
+3. *Our World in Data* is an organization that uses a worldwide network of researchers who publish stories with the goal of making their insights on some of the biggest global issues, more easily digestible. [Go here to learn more](https://ourworldindata.org/co2-emissions)
 
