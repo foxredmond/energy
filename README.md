@@ -1,4 +1,4 @@
-# energy
-Data story 1
+# Data Story 1
+This data story is relates to the UN's SDG of climate action. The story describes the current global energy landscape as well as the feasibility of the shift towards renewable sources. 
 
-[Link to website](https://foxredmond.github.io/energy/)
+Go here for the full story: (https://foxredmond.github.io/energy/)
